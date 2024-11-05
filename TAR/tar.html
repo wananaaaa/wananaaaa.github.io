@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NOTA DE VENTA</title>
+  <style>
+    /* Estilos generales */
+    body {
+      font-family: Arial, sans-serif;
+      background-image:url(fondo.jpg);
+      background-size: cover; 
+      background-position: center; 
+      background-repeat: no-repeat; 
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      width: 800px;
+      background-color: #1b9aab;
+      border-radius: 8px;
+      box-shadow: 0 8px 16px rgba(23, 1, 66, 0.837);
+      padding: 30px;
+      margin: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #f6ffd5;
+      margin-bottom: 20px;
+    }
+    .header, .totals {
+      background-color: #098994ed;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #f6ffd5;
+    }
+    .header label, .totals label {
+      display: block;
+      font-weight: bold;
+      color: #f6ffd5;
+      margin-bottom: 5px;
+    }
+    .header input, .totals input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #f6ffd5;
+      margin-bottom: 15px;
+      font-size: 1em;
+    }
+    .table-container {
+      border: 1px solid #f6ffd5;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid #f6ffd5;
+      vertical-align: top;
+    }
+    th {
+      background-color:#098994ed;
+      color:#f6ffd5;
+      font-weight: bold;
+      text-align: center;
+    }
+    td {
+      text-align: left;
+    }
+    select, input[type="number"] {
+      width: 95%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #f6ffd5;
+      font-size: 0.95em;
+    }
+    .product-image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-top: 10px;
+      display: none; 
+    }
+    .totals {
+      display: none; /* Ocultar sección de totales inicialmente */
+    }
+    #showTotalsBtn {
+      background-color: #098994ed;
+      color: #f6ffd5;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: bold;
+    }
+  </style>
+  <script>
+    const productos = [
+      { id: 1, nombre: "Lapiz", descripcion: "Es indispensable en el ámbito escolar, artístico y de oficina por su facilidad de uso, versatilidad y capacidad de corrección.", imagen: "lapiz.webp", precio: 10 },
+      { id: 2, nombre: "Regla", descripcion: "Se utiliza para trazar líneas rectas y medir distancias con precisión. Es un elemento básico en la educación y en diversas profesiones técnicas y artísticas.", imagen: "regla.png", precio: 20 },
+      { id: 3, nombre: "Colores", descripcion: "Vienen en una amplia variedad de colores y permiten mezclar y sombrear para crear efectos diversos. Son imprescindibles en el mundo del arte y la educación por su capacidad para añadir vida y dinamismo a cualquier obra.", imagen: "colores.png", precio: 30 },
+      { id: 4, nombre: "Cuaderno", descripcion: "Son herramientas indispensables para organizar ideas, registrar información y desarrollar la creatividad.", imagen: "cuaderno.png", precio: 40 },
+      { id: 5, nombre: "Mochila", descripcion: "Desde la escuela hasta las excursiones al aire libre, las mochilas son ideales para transportar libros, equipos, ropa y otros artículos esenciales, distribuyendo el peso de manera cómoda y práctica.", imagen: "mochila.png", precio: 50 }
+    ];
+
+    function updateSubtotal(row) {
+      const quantity = parseFloat(document.getElementById(`quantity${row}`).value) || 0;
+      const unitPrice = parseFloat(document.getElementById(`unitPrice${row}`).value) || 0;
+      const subtotal = quantity * unitPrice;
+      document.getElementById(`subtotal${row}`).value = subtotal.toFixed(2);
+      calculateTotal();
+    }
+
+    function calculateTotal() {
+      let total = 0;
+      for (let i = 1; i <= 5; i++) {
+        const subtotal = parseFloat(document.getElementById(`subtotal${i}`).value) || 0;
+        total += subtotal;
+      }
+      const iva = total * 0.13;
+      document.getElementById("iva").value = iva.toFixed(2);
+      document.getElementById("total").value = (total + iva).toFixed(2);
+    }
+
+    function updateDescription(row) {
+      const select = document.getElementById(`description${row}`);
+      const selectedOption = select.options[select.selectedIndex];
+      const productId = selectedOption.value;
+
+      if (productId) {
+        const producto = productos.find(p => p.id == productId);
+        document.getElementById(`desc${row}`).textContent = producto.descripcion;
+        const image = document.getElementById(`image${row}`);
+        image.src = producto.imagen;
+        image.style.display = 'block';
+        document.getElementById(`unitPrice${row}`).value = producto.precio.toFixed(2);
+        updateSubtotal(row);
+      } else {
+        document.getElementById(`desc${row}`).textContent = "";
+        const image = document.getElementById(`image${row}`);
+        image.src = "";
+        image.style.display = 'none';
+        document.getElementById(`unitPrice${row}`).value = "";
+        document.getElementById(`subtotal${row}`).value = "";
+        calculateTotal();
+      }
+    }
+
+    function muestra() {
+      document.querySelector('.totals').style.display = 'block';
+    }
+  </script>
+</head>
+<body>
+
+<div class="container">
+  <h2>NOTA DE VENTA</h2>
+
+
+  <div class="header">
+    <label for="saleNumber">NRO DE VENTA:</label>
+    <input type="text" id="saleNumber" name="saleNumber" required>
+    
+    <label for="date">FECHA:</label>
+    <input type="date" id="date" name="date" required>
+    
+    <label for="client">CLIENTE:</label>
+    <input type="text" id="client" name="client" required>
+    
+    <label for="phone">TEL:</label>
+    <input type="tel" id="phone" name="phone" required>
+    
+    <label for="address">DIRECCIÓN:</label>
+    <input type="text" id="address" name="address" required>
+    
+    <label for="email">EMAIL:</label>
+    <input type="email" id="email" name="email" required>
+  </div>
+
+ 
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>CANT.</th>
+          <th>DESCRIPCIÓN</th>
+          <th>P. UNIT.</th>
+          <th>IMPORTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <script>
+          for (let i = 1; i <= 5; i++) {
+            document.write(`
+            <tr>
+              <td>
+                <input type="number" id="quantity${i}" min="1" oninput="updateSubtotal(${i})">
+              </td>
+              <td>
+                <select id="description${i}" onchange="updateDescription(${i})">
+                  <option value="">Seleccione un producto</option>
+                  ${productos.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('')}
+                </select>
+                <p id="desc${i}" style="margin: 5px 0;"></p>
+                <img id="image${i}" src="" alt="Imagen del Producto" class="product-image">
+              </td>
+              <td>
+                <input type="number" id="unitPrice${i}" step="0.01" oninput="updateSubtotal(${i})">
+              </td>
+              <td>
+                <input type="number" id="subtotal${i}" readonly>
+              </td>
+            </tr>
+            `);
+          }
+        </script>
+      </tbody>
+    </table>
+  </div>
+
+ 
+  <button id="showTotalsBtn" onclick="muestra()">RESULTADO</button>
+
+
+  <div class="totals">
+    <label for="iva">I.V.A. (13%):</label>
+    <input type="number" id="iva" readonly>
+    
+    <label for="total">TOTAL:</label>
+    <input type="number" id="total" readonly>
+  </div>
+</div>
+
+</body>
+</html>
